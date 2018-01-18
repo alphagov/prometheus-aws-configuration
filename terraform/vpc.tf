@@ -43,11 +43,17 @@ resource "aws_security_group" "ssh_from_internet" {
 
 }
 
-resource "aws_security_group" "https_outbound" {
+resource "aws_security_group" "http_outbound" {
   vpc_id      = "${aws_vpc.main.id}"
-  name        = "HTTPS outbound"
-  description = "Allow HTTPS connections out to the internet"
+  name        = "HTTP outbound"
+  description = "Allow HTTP connections out to the internet"
 
+  egress {
+    protocol    = "tcp"
+    from_port   = 80
+    to_port     = 80
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   egress {
     protocol    = "tcp"
@@ -57,9 +63,8 @@ resource "aws_security_group" "https_outbound" {
   }
 
   tags {
-    Name = "HTTPS outbound"
+    Name = "HTTP outbound"
   }
-
 }
 
 resource "aws_route_table" "public" {
