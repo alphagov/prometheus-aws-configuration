@@ -19,7 +19,7 @@ resource "aws_instance" "prometheus" {
   instance_type          = "t2.micro"
   subnet_id              = "${aws_subnet.main.id}"
   vpc_security_group_ids = ["${aws_security_group.ssh_from_internet.id}", "${aws_security_group.http_outbound.id}"]
-  user_data              = "${file("cloud.conf")}"
+  user_data              = "${data.template_file.user_data_script.rendered}"
   iam_instance_profile   = "${aws_iam_instance_profile.prometheus_config_reader_profile.id}"
 
   tags {
@@ -27,3 +27,14 @@ resource "aws_instance" "prometheus" {
   }
 }
 
+data "template_file" "user_data_script" {
+  template = "${file("cloud.conf")}"
+}
+
+output "data" {
+  value = "${data.template_file.user_data_script.rendered}"
+}
+
+output "public_dns" {
+  value = "${aws_instance.prometheus.public_dns}"
+}
