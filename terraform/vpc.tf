@@ -25,10 +25,10 @@ resource "aws_subnet" "main" {
   }
 }
 
-resource "aws_security_group" "ssh_from_internet" {
+resource "aws_security_group" "ssh_from_gds" {
   vpc_id      = "${aws_vpc.main.id}"
-  name        = "SSH from internet"
-  description = "Bastion hosts in the DMZ that can be connected to via SSH from whitelisted locations"
+  name        = "SSH from GDS"
+  description = "Allow SSH access from GDS"
 
   ingress {
     protocol    = "tcp"
@@ -38,9 +38,8 @@ resource "aws_security_group" "ssh_from_internet" {
   }
 
   tags {
-    Name = "SSH from internet"
+    Name = "SSH from GDS"
   }
-
 }
 
 resource "aws_security_group" "http_outbound" {
@@ -64,6 +63,23 @@ resource "aws_security_group" "http_outbound" {
 
   tags {
     Name = "HTTP outbound"
+  }
+}
+
+resource "aws_security_group" "prometheus_from_gds" {
+  vpc_id      = "${aws_vpc.main.id}"
+  name        = "Prometheus from GDS"
+  description = "Allow Prometheus access from GDS"
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 9090
+    to_port     = 9090
+    cidr_blocks = ["${var.cidr_admin_whitelist}"]
+  }
+
+  tags {
+    Name = "Prometheus from GDS"
   }
 }
 
