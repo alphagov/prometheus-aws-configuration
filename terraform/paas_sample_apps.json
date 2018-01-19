@@ -1,0 +1,9 @@
+[
+  {
+    "targets": ["rails-prometheus-pregeological-nondesistence.cloudapps.digital"]
+  },
+  {
+    "targets": ["dropwizard-example.cloudapps.digital"],
+    "labels": { "__metrics_path__": "/prometheus" }
+  }
+]
