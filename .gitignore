@@ -1,6 +1,8 @@
 .idea
 *.iml
 
+*.backup
+
 # Created by https://www.gitignore.io/api/terraform
 
 ### Terraform ###
