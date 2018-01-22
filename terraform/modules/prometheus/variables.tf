@@ -12,3 +12,11 @@ variable "cidr_admin_whitelist" {
     "85.133.67.244/32"
   ]
 }
+
+variable "ami_id" {
+}
+
+variable "prometheus_version" {
+  description = "Prometheus version to install in the machine"
+  default     = "2.0.0"
+}
