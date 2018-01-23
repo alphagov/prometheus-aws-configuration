@@ -203,3 +203,16 @@ resource "aws_eip_association" "eip_assoc" {
   instance_id   = "${aws_instance.prometheus.id}"
   allocation_id = "${aws_eip.eip_prometheus.id}"
 }
+
+resource "aws_route53_zone" "main" {
+  name   = "gds-reliability.engineering"
+}
+
+resource "aws_route53_record" "prometheus_www" {
+  zone_id = "${aws_route53_zone.main.zone_id}"
+  name    = "metrics.gds-reliability.engineering"
+  type    = "A"
+  ttl     = "30"
+  records = ["${aws_eip.eip_prometheus.public_ip}"]
+}
+
