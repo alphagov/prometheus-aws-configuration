@@ -194,3 +194,12 @@ resource "aws_route_table_association" "public" {
   subnet_id = "${aws_subnet.main.id}"
   route_table_id = "${aws_route_table.public.id}"
 }
+
+resource "aws_eip" "eip_prometheus" {
+  vpc = true
+}
+
+resource "aws_eip_association" "eip_assoc" {
+  instance_id   = "${aws_instance.prometheus.id}"
+  allocation_id = "${aws_eip.eip_prometheus.id}"
+}
