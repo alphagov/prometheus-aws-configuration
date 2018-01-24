@@ -1,5 +1,8 @@
 [
   {
+    "targets": ["grafana-paas.cloudapps.digital"]
+  },
+  {
     "targets": ["rails-prometheus-pregeological-nondesistence.cloudapps.digital"]
   },
   {
