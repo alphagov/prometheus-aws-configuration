@@ -58,6 +58,7 @@ resource "aws_instance" "prometheus" {
     "${aws_security_group.ssh_from_gds.id}",
     "${aws_security_group.prometheus_from_gds.id}",
     "${aws_security_group.http_outbound.id}",
+    "${aws_security_group.external_http_traffic.id}",
   ]
 
   tags {
@@ -70,6 +71,7 @@ data "template_file" "user_data_script" {
 
   vars {
     prometheus_version = "${var.prometheus_version}"
+    domain_name        = "${aws_eip.eip_prometheus.public_ip}"
   }
 }
 
@@ -181,6 +183,23 @@ resource "aws_security_group" "prometheus_from_gds" {
   }
 }
 
+resource "aws_security_group" "external_http_traffic" {
+  vpc_id      = "${aws_vpc.main.id}"
+  name        = "external_http_traffic"
+  description = "Allow external http traffic"
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 80
+    to_port     = 80
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name = "external-http-traffic"
+  }
+}
+
 resource "aws_route_table" "public" {
   vpc_id = "${aws_vpc.main.id}"
 
@@ -215,4 +234,3 @@ resource "aws_route53_record" "prometheus_www" {
   ttl     = "30"
   records = ["${aws_eip.eip_prometheus.public_ip}"]
 }
-
