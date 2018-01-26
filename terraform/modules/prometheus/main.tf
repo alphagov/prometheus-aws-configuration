@@ -227,10 +227,28 @@ resource "aws_route53_zone" "main" {
   name   = "gds-reliability.engineering"
 }
 
-resource "aws_route53_record" "prometheus_www" {
+resource "aws_route53_zone" "metrics" {
+  name   = "metrics.gds-reliability.engineering"
+}
+
+resource "aws_route53_record" "metrics" {
   zone_id = "${aws_route53_zone.main.zone_id}"
   name    = "metrics.gds-reliability.engineering"
+  type    = "NS"
+  ttl     = "3600"
+
+  records = [
+    "${aws_route53_zone.metrics.name_servers.0}",
+    "${aws_route53_zone.metrics.name_servers.1}",
+    "${aws_route53_zone.metrics.name_servers.2}",
+    "${aws_route53_zone.metrics.name_servers.3}",
+  ]
+}
+
+resource "aws_route53_record" "prometheus_www" {
+  zone_id = "${aws_route53_zone.metrics.zone_id}"
+  name    = "metrics.gds-reliability.engineering"
   type    = "A"
-  ttl     = "30"
+  ttl     = "3600"
   records = ["${aws_eip.eip_prometheus.public_ip}"]
 }
