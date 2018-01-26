@@ -20,3 +20,11 @@ variable "prometheus_version" {
   description = "Prometheus version to install in the machine"
   default     = "2.0.0"
 }
+
+variable "domain_name" {
+  description = "Domain to serve Prometheus from and register for a TLS certificate"
+}
+
+variable "lets_encrypt_email" {
+  description = "Email to register with Let's Encrypt CA"
+}

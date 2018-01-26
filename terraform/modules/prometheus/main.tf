@@ -71,7 +71,8 @@ data "template_file" "user_data_script" {
 
   vars {
     prometheus_version = "${var.prometheus_version}"
-    domain_name        = "${aws_eip.eip_prometheus.public_ip}"
+    domain_name        = "${var.domain_name}"
+    lets_encrypt_email = "${var.lets_encrypt_email}"
   }
 }
 
@@ -190,8 +191,8 @@ resource "aws_security_group" "external_http_traffic" {
 
   ingress {
     protocol    = "tcp"
-    from_port   = 80
-    to_port     = 80
+    from_port   = 443
+    to_port     = 443
     cidr_blocks = ["0.0.0.0/0"]
   }
 

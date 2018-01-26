@@ -7,9 +7,11 @@ terraform {
 }
 
 module "prometheus" {
-  source = "modules/prometheus"
+  source             = "modules/prometheus"
 
-  ami_id = "${data.aws_ami.ubuntu.id}"
+  ami_id             = "${data.aws_ami.ubuntu.id}"
+  lets_encrypt_email = "reliability-engineering-tools-team@digital.cabinet-office.gov.uk"
+  domain_name        = "metrics.gds-reliability.engineering"
 }
 
 data "aws_ami" "ubuntu" {
