@@ -56,7 +56,6 @@ resource "aws_instance" "prometheus" {
   iam_instance_profile   = "${aws_iam_instance_profile.prometheus_config_reader_profile.id}"
   vpc_security_group_ids = [
     "${aws_security_group.ssh_from_gds.id}",
-    "${aws_security_group.prometheus_from_gds.id}",
     "${aws_security_group.http_outbound.id}",
     "${aws_security_group.external_http_traffic.id}",
   ]
@@ -164,23 +163,6 @@ resource "aws_security_group" "http_outbound" {
 
   tags {
     Name = "HTTP outbound"
-  }
-}
-
-resource "aws_security_group" "prometheus_from_gds" {
-  vpc_id      = "${aws_vpc.main.id}"
-  name        = "Prometheus from GDS"
-  description = "Allow Prometheus access from GDS"
-
-  ingress {
-    protocol    = "tcp"
-    from_port   = 9090
-    to_port     = 9090
-    cidr_blocks = ["${var.cidr_admin_whitelist}"]
-  }
-
-  tags {
-    Name = "Prometheus from GDS"
   }
 }
 
