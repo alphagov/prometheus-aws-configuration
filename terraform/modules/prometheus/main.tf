@@ -58,6 +58,7 @@ resource "aws_instance" "prometheus" {
     "${aws_security_group.ssh_from_gds.id}",
     "${aws_security_group.http_outbound.id}",
     "${aws_security_group.external_http_traffic.id}",
+    "${aws_security_group.logstash_outbound.id}",
   ]
 
   tags {
@@ -163,6 +164,19 @@ resource "aws_security_group" "http_outbound" {
 
   tags {
     Name = "HTTP outbound"
+  }
+}
+
+resource "aws_security_group" "logstash_outbound" {
+  vpc_id      = "${aws_vpc.main.id}"
+  name        = "Logstash outbound"
+  description = "Allow connections to our ELK provider"
+
+  egress {
+    protocol    = "tcp"
+    from_port   = 18210
+    to_port     = 18210
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
