@@ -29,9 +29,8 @@ variable "lets_encrypt_email" {
   description = "Email to register with Let's Encrypt CA"
 }
 
-variable "certbot_flags" {
-  description = "Additional flags to pass to certbot (e.g. --staging)"
-  default = ""
+variable "real_certificate" {
+  description = "Issue a real TLS certificate (yes/no)"
 }
 
 variable "logstash_endpoint" {

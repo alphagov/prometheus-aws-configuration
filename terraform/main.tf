@@ -1,5 +1,5 @@
-variable "certbot_flags" {
-  description = "Additional flags to pass to certbot (e.g. --staging)"
+variable "real_certificate" {
+  description = "Issue a real TLS certificate (yes/no)"
 }
 
 provider "aws" {
@@ -15,7 +15,7 @@ module "prometheus" {
 
   ami_id              = "${data.aws_ami.ubuntu.id}"
   lets_encrypt_email  = "reliability-engineering-tools-team@digital.cabinet-office.gov.uk"
-  certbot_flags       = "${var.certbot_flags}"
+  real_certificate    = "${var.real_certificate}"
   domain_name         = "metrics.gds-reliability.engineering"
   logstash_endpoint   = "47c3212e-794a-4be1-af7c-2eac93519b0a-ls.logit.io"
   logstash_port       = 18210
