@@ -73,6 +73,8 @@ data "template_file" "user_data_script" {
     prometheus_version = "${var.prometheus_version}"
     domain_name        = "${var.domain_name}"
     lets_encrypt_email = "${var.lets_encrypt_email}"
+    logstash_endpoint  = "${var.logstash_endpoint}"
+    logstash_port      = "${var.logstash_port}"
   }
 }
 
@@ -174,8 +176,8 @@ resource "aws_security_group" "logstash_outbound" {
 
   egress {
     protocol    = "tcp"
-    from_port   = 18210
-    to_port     = 18210
+    from_port   = "${var.logstash_port}"
+    to_port     = "${var.logstash_port}"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }

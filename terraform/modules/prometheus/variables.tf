@@ -28,3 +28,11 @@ variable "domain_name" {
 variable "lets_encrypt_email" {
   description = "Email to register with Let's Encrypt CA"
 }
+
+variable "logstash_endpoint" {
+  description = "Endpoint to send logs to for logstash"
+}
+
+variable "logstash_port" {
+  description = "Port of logstash endpoint"
+}
