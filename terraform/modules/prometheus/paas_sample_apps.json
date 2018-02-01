@@ -8,15 +8,15 @@
   {
     "targets": ["dropwizard-example.cloudapps.digital"],
     "labels": {
-      "cf_app_instance": "1",
-      "__metrics_path__": "/prometheus?cf_app_instance=4130b872-83d4-492f-a5a6-47747aa67526:1"
+      "cf_app_instance": "0",
+      "__metrics_path__": "/prometheus?cf_app_instance=4130b872-83d4-492f-a5a6-47747aa67526:0"
     }
   },
   {
     "targets": ["dropwizard-example.cloudapps.digital"],
     "labels": {
-      "cf_app_instance": "2",
-      "__metrics_path__": "/prometheus?cf_app_instance=4130b872-83d4-492f-a5a6-47747aa67526:2"
+      "cf_app_instance": "1",
+      "__metrics_path__": "/prometheus?cf_app_instance=4130b872-83d4-492f-a5a6-47747aa67526:1"
     }
   }
 ]
