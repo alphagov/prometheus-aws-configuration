@@ -1,22 +1,36 @@
 [
   {
-    "targets": ["grafana-paas.cloudapps.digital"]
+    "targets": ["grafana-paas.cloudapps.digital"],
+    "labels": {
+      "cf_app_instance": "0",
+      "__param_cf_app_guid": "b0c7a68d-ea20-4a64-97f2-379edb57c316",
+      "__param_cf_app_instance_index": "0"
+    }
   },
   {
-    "targets": ["rails-prometheus-pregeological-nondesistence.cloudapps.digital"]
+    "targets": ["rails-prometheus.cloudapps.digital"],
+    "labels": {
+      "cf_app_instance": "0",
+      "__param_cf_app_guid": "8b6d6391-6d5d-4b42-8741-f1c96312bcfa",
+      "__param_cf_app_instance_index": "0"
+    }
   },
   {
     "targets": ["dropwizard-example.cloudapps.digital"],
     "labels": {
       "cf_app_instance": "0",
-      "__metrics_path__": "/prometheus?cf_app_instance=4130b872-83d4-492f-a5a6-47747aa67526:0"
+      "__param_cf_app_guid": "4130b872-83d4-492f-a5a6-47747aa67526",
+      "__param_cf_app_instance_index": "0",
+      "__metrics_path__": "/prometheus"
     }
   },
   {
     "targets": ["dropwizard-example.cloudapps.digital"],
     "labels": {
       "cf_app_instance": "1",
-      "__metrics_path__": "/prometheus?cf_app_instance=4130b872-83d4-492f-a5a6-47747aa67526:1"
+      "__param_cf_app_guid": "4130b872-83d4-492f-a5a6-47747aa67526",
+      "__param_cf_app_instance_index": "1",
+      "__metrics_path__": "/prometheus"
     }
   }
 ]
