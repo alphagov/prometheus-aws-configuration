@@ -18,7 +18,7 @@ variable "ami_id" {
 
 variable "prometheus_version" {
   description = "Prometheus version to install in the machine"
-  default     = "2.0.0"
+  default     = "2.1.0"
 }
 
 variable "domain_name" {
