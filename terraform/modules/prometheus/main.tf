@@ -37,8 +37,6 @@ resource "aws_iam_role_policy" "prometheus_config_reader_policy" {
   "Statement": [
     {
       "Action": [
-        "s3:GetObject",
-        "s3:ListBucket",
         "ssm:GetParameter",
         "ssm:DescribeParameters"
       ],
@@ -79,22 +77,6 @@ data "template_file" "user_data_script" {
     logstash_endpoint  = "${var.logstash_endpoint}"
     logstash_port      = "${var.logstash_port}"
   }
-}
-
-resource "aws_s3_bucket" "prometheus_config_bucket" {
-  bucket = "gds-prometheus-config"
-  acl    = "private"
-
-  versioning {
-    enabled = true
-  }
-}
-
-resource "aws_s3_bucket_object" "prometheus_config" {
-  bucket = "${aws_s3_bucket.prometheus_config_bucket.id}"
-  key    = "prometheus.yml"
-  source = "${path.module}/prometheus.yml"
-  etag   = "${md5(file("${path.module}/prometheus.yml"))}"
 }
 
 resource "aws_vpc" "main" {
