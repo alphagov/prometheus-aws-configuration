@@ -38,7 +38,9 @@ resource "aws_iam_role_policy" "prometheus_config_reader_policy" {
     {
       "Action": [
         "s3:GetObject",
-        "s3:ListBucket"
+        "s3:ListBucket",
+        "ssm:GetParameter",
+        "ssm:DescribeParameters"
       ],
       "Effect": "Allow",
       "Resource": "*"
@@ -93,13 +95,6 @@ resource "aws_s3_bucket_object" "prometheus_config" {
   key    = "prometheus.yml"
   source = "${path.module}/prometheus.yml"
   etag   = "${md5(file("${path.module}/prometheus.yml"))}"
-}
-
-resource "aws_s3_bucket_object" "prometheus_config_targets" {
-  bucket = "${aws_s3_bucket.prometheus_config_bucket.id}"
-  key    = "targets/paas_sample_apps.json"
-  source = "${path.module}/paas_sample_apps.json"
-  etag   = "${md5(file("${path.module}/paas_sample_apps.json"))}"
 }
 
 resource "aws_vpc" "main" {
