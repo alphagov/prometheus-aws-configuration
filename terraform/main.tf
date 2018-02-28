@@ -16,10 +16,22 @@ module "prometheus" {
   ami_id              = "${data.aws_ami.ubuntu.id}"
   lets_encrypt_email  = "reliability-engineering-tools-team@digital.cabinet-office.gov.uk"
   real_certificate    = "${var.real_certificate}"
+  volume_to_attach    = "${aws_ebs_volume.promethues-disk.id}"
   domain_name         = "metrics.gds-reliability.engineering"
   logstash_endpoint   = "47c3212e-794a-4be1-af7c-2eac93519b0a-ls.logit.io"
   logstash_port       = 18210
 }
+
+
+resource "aws_ebs_volume" "promethues-disk" {
+    availability_zone = "eu-west-1b"
+    size = "500"
+    tags {
+        Name = "promethues-disk"
+    }
+}
+
+
 
 data "aws_ami" "ubuntu" {
   most_recent = true

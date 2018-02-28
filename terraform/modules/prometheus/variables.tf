@@ -21,6 +21,23 @@ variable "prometheus_version" {
   default     = "2.1.0"
 }
 
+
+variable "disk_size" {
+  description = "This is the disk size tp be attached to the instance"
+  default = 500
+}
+
+
+variable "volume_to_attach" {
+  description = "The volume to attach to instance"
+}
+
+variable "device_mount_path" {
+  description = "The path to mount the promethus disk"
+  default = "/dev/sdh"
+}
+
+
 variable "domain_name" {
   description = "Domain to serve Prometheus from and register for a TLS certificate"
 }

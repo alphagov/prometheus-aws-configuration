@@ -66,6 +66,14 @@ resource "aws_instance" "prometheus" {
   }
 }
 
+
+resource "aws_volume_attachment" "attach-prometheus-disk" {
+  device_name = "${var.device_mount_path}"
+  volume_id   = "${var.volume_to_attach}"
+  instance_id = "${aws_instance.prometheus.id}"
+  skip_destroy = true
+}
+
 data "template_file" "user_data_script" {
   template = "${file("${path.module}/cloud.conf")}"
 
