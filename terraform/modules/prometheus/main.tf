@@ -81,7 +81,7 @@ data "template_file" "user_data_script" {
     prometheus_version = "${var.prometheus_version}"
     domain_name        = "${var.domain_name}"
     lets_encrypt_email = "${var.lets_encrypt_email}"
-    real_certificate   = "${var.real_certificate}"
+    real_certificate   = "${var.real_certificate=="yes" ? "-v" : "--staging"}"
     logstash_endpoint  = "${var.logstash_endpoint}"
     logstash_port      = "${var.logstash_port}"
   }
