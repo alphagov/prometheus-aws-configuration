@@ -244,3 +244,12 @@ resource "aws_route53_record" "prometheus_www" {
   ttl     = "3600"
   records = ["${aws_eip.eip_prometheus.public_ip}"]
 }
+
+resource "aws_s3_bucket" "gds-prometheus-targets" {
+  bucket = "gds-prometheus-targets"
+  acl    = "private"
+
+  versioning {
+    enabled = true
+  }
+}
