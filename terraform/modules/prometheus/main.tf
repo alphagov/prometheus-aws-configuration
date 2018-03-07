@@ -245,7 +245,7 @@ resource "aws_route53_record" "prometheus_www" {
   records = ["${aws_eip.eip_prometheus.public_ip}"]
 }
 
-resource "aws_s3_bucket" "gds-prometheus-targets" {
+resource "aws_s3_bucket" "gds_prometheus_targets" {
   bucket = "gds-prometheus-targets"
   acl    = "private"
 
@@ -253,3 +253,32 @@ resource "aws_s3_bucket" "gds-prometheus-targets" {
     enabled = true
   }
 }
+
+resource "aws_iam_user" "cf_app_discovery" {
+  name = "cf_app_discovery"
+  path = "/system/"
+}
+
+resource "aws_iam_user_policy" "cf_app_discovery_bucket_access" {
+  name = "cf_app_discovery_bucket_access"
+  user = "${aws_iam_user.cf_app_discovery.name}"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "s3:*"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "${aws_s3_bucket.gds_prometheus_targets.arn}/*",
+        "${aws_s3_bucket.gds_prometheus_targets.arn}"
+      ]
+    }
+  ]
+}
+EOF
+}
+
