@@ -37,11 +37,14 @@ resource "aws_iam_role_policy" "prometheus_config_reader_policy" {
   "Statement": [
     {
       "Action": [
-        "ssm:GetParameter",
-        "ssm:DescribeParameters"
+        "s3:GetObject",
+        "s3:ListBucket"
       ],
       "Effect": "Allow",
-      "Resource": "*"
+      "Resource": [
+        "${aws_s3_bucket.gds_prometheus_targets.arn}/*",
+        "${aws_s3_bucket.gds_prometheus_targets.arn}"
+      ]
     }
   ]
 }
@@ -84,6 +87,7 @@ data "template_file" "user_data_script" {
     real_certificate   = "${var.real_certificate=="yes" ? "-v" : "--staging"}"
     logstash_endpoint  = "${var.logstash_endpoint}"
     logstash_port      = "${var.logstash_port}"
+    config_bucket      = "${aws_s3_bucket.gds_prometheus_targets.id}"
   }
 }
 
