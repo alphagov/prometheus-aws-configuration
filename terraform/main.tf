@@ -23,6 +23,21 @@ module "prometheus" {
 }
 
 
+module "alertmanager" {
+  source             = "modules/alertmanager"
+
+  ami_id                = "${data.aws_ami.ubuntu.id}"
+  lets_encrypt_email    = "reliability-engineering-tools-team@digital.cabinet-office.gov.uk"
+  route53resource       = "${module.prometheus.route53resource}"
+  prom_subnet_id        = "${module.prometheus.prom_subnet_id}"
+  prom_security_groups  = "${module.prometheus.prom_security_groups}"
+  real_certificate      = "${var.real_certificate}"
+  domain_name           = "alerts.gds-reliability.engineering"
+  logstash_endpoint     = "47c3212e-794a-4be1-af7c-2eac93519b0a-ls.logit.io"
+  logstash_port         = 18210
+}
+
+
 resource "aws_ebs_volume" "promethues-disk" {
     availability_zone = "eu-west-1b"
     size = "500"
