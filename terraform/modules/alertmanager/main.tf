@@ -14,27 +14,18 @@ resource "aws_instance" "alertmanager" {
   }
 }
 
-
-#resource "aws_volume_attachment" "attach-prometheus-disk" {
-#  device_name = "${var.device_mount_path}"
-#  volume_id   = "${var.volume_to_attach}"
-#  instance_id = "${aws_instance.prometheus.id}"
-#  skip_destroy = true
-#}
-
 data "template_file" "user_data_script" {
   template = "${file("${path.module}/cloud.conf")}"
 
   vars {
     alertmanager_version = "${var.alertmanager_version}"
-    domain_name        = "${var.domain_name}"
-    lets_encrypt_email = "${var.lets_encrypt_email}"
-    real_certificate   = "${var.real_certificate=="yes" ? "-v" : "--staging"}"
-    logstash_endpoint  = "${var.logstash_endpoint}"
-    logstash_port      = "${var.logstash_port}"
+    domain_name          = "${var.domain_name}"
+    lets_encrypt_email   = "${var.lets_encrypt_email}"
+    real_certificate     = "${var.real_certificate=="yes" ? "-v" : "--staging"}"
+    logstash_endpoint    = "${var.logstash_endpoint}"
+    logstash_port        = "${var.logstash_port}"
   }
 }
-
 
 resource "aws_eip" "eip_alertmanager" {
   vpc = true
@@ -45,12 +36,10 @@ resource "aws_eip_association" "eip_assoc" {
   allocation_id = "${aws_eip.eip_alertmanager.id}"
 }
 
-
 resource "aws_route53_record" "alertmanager_www" {
-  zone_id = "${var.route53resource}"
+  zone_id = "${var.reliability_engineering_zone_id}"
   name    = "alerts.gds-reliability.engineering"
   type    = "A"
   ttl     = "3600"
   records = ["${aws_eip.eip_alertmanager.public_ip}"]
 }
-

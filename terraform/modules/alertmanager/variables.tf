@@ -2,19 +2,19 @@
 variable "cidr_admin_whitelist" {
   description = "CIDR ranges permitted to communicate with administrative endpoints"
   type        = "list"
-  default     = [
+
+  default = [
     "213.86.153.212/32",
     "213.86.153.213/32",
     "213.86.153.214/32",
     "213.86.153.235/32",
     "213.86.153.236/32",
     "213.86.153.237/32",
-    "85.133.67.244/32"
+    "85.133.67.244/32",
   ]
 }
 
-variable "ami_id" {
-}
+variable "ami_id" {}
 
 variable "alertmanager_version" {
   description = "alertmanager version to install in the machine"
@@ -23,26 +23,24 @@ variable "alertmanager_version" {
 
 variable "device_mount_path" {
   description = "The path to mount the promethus disk"
-  default = "/dev/sdh"
+  default     = "/dev/sdh"
 }
-
 
 variable "domain_name" {
   description = "Domain to serve Prometheus from and register for a TLS certificate"
 }
 
-variable "route53resource" {
-  description = "This is the default route53 resource created b prometheus"
+variable "reliability_engineering_zone_id" {
+  description = "This is the default route53 resource created by the prometheus module"
 }
 
 variable "prom_subnet_id" {
-  description = "This is the default route53 resource created b prometheus"
+  description = "This is the subnet created by the prometheus module"
 }
 
-
 variable "prom_security_groups" {
-  type = "list"
-  description = "This is the default route53 resource created b prometheus"
+  type        = "list"
+  description = "This is the security group created by the prometheus module"
 }
 
 variable "lets_encrypt_email" {
