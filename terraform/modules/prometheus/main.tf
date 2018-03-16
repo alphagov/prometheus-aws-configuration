@@ -3,12 +3,12 @@ terraform {
 }
 
 resource "aws_iam_instance_profile" "prometheus_config_reader_profile" {
-  name  = "prometheus_config_reader_profile"
+  name = "prometheus_config_reader_profile_${var.deploy_env}"
   role = "${aws_iam_role.prometheus_config_reader.name}"
 }
 
 resource "aws_iam_role" "prometheus_config_reader" {
-  name = "prometheus_config_reader"
+  name = "prometheus_config_reader_${var.deploy_env}"
 
   assume_role_policy = <<EOF
 {
@@ -28,7 +28,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "prometheus_config_reader_policy" {
-  name = "prometheus_config_reader_policy"
+  name = "prometheus_config_reader_policy_${var.deploy_env}"
   role = "${aws_iam_role.prometheus_config_reader.id}"
 
   policy = <<EOF
@@ -52,11 +52,12 @@ EOF
 }
 
 resource "aws_instance" "prometheus" {
-  ami                    = "${var.ami_id}"
-  instance_type          = "t2.micro"
-  subnet_id              = "${aws_subnet.main.id}"
-  user_data              = "${data.template_file.user_data_script.rendered}"
-  iam_instance_profile   = "${aws_iam_instance_profile.prometheus_config_reader_profile.id}"
+  ami                  = "${var.ami_id}"
+  instance_type        = "t2.micro"
+  subnet_id            = "${aws_subnet.main.id}"
+  user_data            = "${data.template_file.user_data_script.rendered}"
+  iam_instance_profile = "${aws_iam_instance_profile.prometheus_config_reader_profile.id}"
+
   vpc_security_group_ids = [
     "${aws_security_group.ssh_from_gds.id}",
     "${aws_security_group.http_outbound.id}",
@@ -65,15 +66,14 @@ resource "aws_instance" "prometheus" {
   ]
 
   tags {
-    Name = "Prometheus"
+    Name = "Prometheus-${var.deploy_env}"
   }
 }
 
-
 resource "aws_volume_attachment" "attach-prometheus-disk" {
-  device_name = "${var.device_mount_path}"
-  volume_id   = "${var.volume_to_attach}"
-  instance_id = "${aws_instance.prometheus.id}"
+  device_name  = "${var.device_mount_path}"
+  volume_id    = "${var.volume_to_attach}"
+  instance_id  = "${aws_instance.prometheus.id}"
   skip_destroy = true
 }
 
@@ -92,11 +92,11 @@ data "template_file" "user_data_script" {
 }
 
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/24"
+  cidr_block           = "10.0.0.0/24"
   enable_dns_hostnames = true
 
   tags {
-    Name = "Reliability Engineering - Prometheus VPC"
+    Name = "Reliability Engineering - Prometheus VPC ${var.deploy_env}"
   }
 }
 
@@ -104,23 +104,23 @@ resource "aws_internet_gateway" "main" {
   vpc_id = "${aws_vpc.main.id}"
 
   tags {
-    Name = "main"
+    Name = "Main-${var.deploy_env}"
   }
 }
 
 resource "aws_subnet" "main" {
-  vpc_id     = "${aws_vpc.main.id}"
-  cidr_block = "${aws_vpc.main.cidr_block}"
+  vpc_id                  = "${aws_vpc.main.id}"
+  cidr_block              = "${aws_vpc.main.cidr_block}"
   map_public_ip_on_launch = true
 
   tags {
-    Name = "Main"
+    Name = "Main-${var.deploy_env}"
   }
 }
 
 resource "aws_security_group" "ssh_from_gds" {
   vpc_id      = "${aws_vpc.main.id}"
-  name        = "SSH from GDS"
+  name        = "SSH from GDS ${var.deploy_env}"
   description = "Allow SSH access from GDS"
 
   ingress {
@@ -137,7 +137,7 @@ resource "aws_security_group" "ssh_from_gds" {
 
 resource "aws_security_group" "http_outbound" {
   vpc_id      = "${aws_vpc.main.id}"
-  name        = "HTTP outbound"
+  name        = "HTTP outbound ${var.deploy_env}"
   description = "Allow HTTP connections out to the internet"
 
   egress {
@@ -155,13 +155,13 @@ resource "aws_security_group" "http_outbound" {
   }
 
   tags {
-    Name = "HTTP outbound"
+    Name = "HTTP outbound ${var.deploy_env}"
   }
 }
 
 resource "aws_security_group" "logstash_outbound" {
   vpc_id      = "${aws_vpc.main.id}"
-  name        = "Logstash outbound"
+  name        = "Logstash outbound ${var.deploy_env}"
   description = "Allow connections to our ELK provider"
 
   egress {
@@ -174,7 +174,7 @@ resource "aws_security_group" "logstash_outbound" {
 
 resource "aws_security_group" "external_http_traffic" {
   vpc_id      = "${aws_vpc.main.id}"
-  name        = "external_http_traffic"
+  name        = "external_http_traffic ${var.deploy_env}"
   description = "Allow external http traffic"
 
   ingress {
@@ -206,7 +206,7 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table_association" "public" {
-  subnet_id = "${aws_subnet.main.id}"
+  subnet_id      = "${aws_subnet.main.id}"
   route_table_id = "${aws_route_table.public.id}"
 }
 
@@ -219,38 +219,19 @@ resource "aws_eip_association" "eip_assoc" {
   allocation_id = "${aws_eip.eip_prometheus.id}"
 }
 
-resource "aws_route53_zone" "main" {
-  name   = "gds-reliability.engineering"
-}
-
-resource "aws_route53_zone" "metrics" {
-  name   = "metrics.gds-reliability.engineering"
-}
-
-resource "aws_route53_record" "metrics" {
-  zone_id = "${aws_route53_zone.main.zone_id}"
-  name    = "metrics.gds-reliability.engineering"
-  type    = "NS"
-  ttl     = "3600"
-
-  records = [
-    "${aws_route53_zone.metrics.name_servers.0}",
-    "${aws_route53_zone.metrics.name_servers.1}",
-    "${aws_route53_zone.metrics.name_servers.2}",
-    "${aws_route53_zone.metrics.name_servers.3}",
-  ]
-}
+# I need to ask why we have an NS record in this. 
+#I tought it might have been to configure a sub domain, however the requirment is not clear to me
 
 resource "aws_route53_record" "prometheus_www" {
-  zone_id = "${aws_route53_zone.metrics.zone_id}"
-  name    = "metrics.gds-reliability.engineering"
+  zone_id = "${var.gds_re-dns_zone_id}"
+  name    = "metrics.${var.deploy_env}.gds-reliability.engineering"
   type    = "A"
   ttl     = "3600"
   records = ["${aws_eip.eip_prometheus.public_ip}"]
 }
 
 resource "aws_s3_bucket" "gds_prometheus_targets" {
-  bucket = "gds-prometheus-targets"
+  bucket = "gds-prometheus-targets-${var.deploy_env}"
   acl    = "private"
 
   versioning {
@@ -259,12 +240,12 @@ resource "aws_s3_bucket" "gds_prometheus_targets" {
 }
 
 resource "aws_iam_user" "cf_app_discovery" {
-  name = "cf_app_discovery"
+  name = "cf_app_discovery_${var.deploy_env}"
   path = "/system/"
 }
 
 resource "aws_iam_user_policy" "cf_app_discovery_bucket_access" {
-  name = "cf_app_discovery_bucket_access"
+  name = "cf_app_discovery_bucket_access_${var.deploy_env}"
   user = "${aws_iam_user.cf_app_discovery.name}"
 
   policy = <<EOF
@@ -285,4 +266,3 @@ resource "aws_iam_user_policy" "cf_app_discovery_bucket_access" {
 }
 EOF
 }
-

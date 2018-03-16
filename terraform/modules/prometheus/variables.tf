@@ -2,19 +2,23 @@
 variable "cidr_admin_whitelist" {
   description = "CIDR ranges permitted to communicate with administrative endpoints"
   type        = "list"
-  default     = [
+
+  default = [
     "213.86.153.212/32",
     "213.86.153.213/32",
     "213.86.153.214/32",
     "213.86.153.235/32",
     "213.86.153.236/32",
     "213.86.153.237/32",
-    "85.133.67.244/32"
+    "85.133.67.244/32",
   ]
 }
 
-variable "ami_id" {
-}
+variable "gds_re-dns_zone_id" {}
+
+variable "deploy_env" {}
+
+variable "ami_id" {}
 
 variable "prometheus_version" {
   description = "Prometheus version to install in the machine"
@@ -27,9 +31,8 @@ variable "volume_to_attach" {
 
 variable "device_mount_path" {
   description = "The path to mount the promethus disk"
-  default = "/dev/sdh"
+  default     = "/dev/sdh"
 }
-
 
 variable "domain_name" {
   description = "Domain to serve Prometheus from and register for a TLS certificate"

@@ -6,10 +6,6 @@ output "public_dns" {
   value = "${aws_instance.prometheus.public_dns}"
 }
 
-output "reliability_engineering_zone_id" {
-  value = "${aws_route53_zone.main.zone_id}"
-}
-
 output "prom_security_groups" {
   value = [
     "${aws_security_group.ssh_from_gds.id}",

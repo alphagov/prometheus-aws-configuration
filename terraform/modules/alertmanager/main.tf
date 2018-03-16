@@ -10,7 +10,7 @@ resource "aws_instance" "alertmanager" {
   vpc_security_group_ids = ["${var.prom_security_groups}"]
 
   tags {
-    Name = "alertmanager"
+    Name = "alertmanager-${var.deploy_env}"
   }
 }
 
@@ -37,8 +37,8 @@ resource "aws_eip_association" "eip_assoc" {
 }
 
 resource "aws_route53_record" "alertmanager_www" {
-  zone_id = "${var.reliability_engineering_zone_id}"
-  name    = "alerts.gds-reliability.engineering"
+  zone_id = "${var.gds_re-dns_zone_id}"
+  name    = "alerts.${var.deploy_env}.gds-reliability.engineering"
   type    = "A"
   ttl     = "3600"
   records = ["${aws_eip.eip_alertmanager.public_ip}"]

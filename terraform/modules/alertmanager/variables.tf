@@ -1,5 +1,7 @@
 variable "ami_id" {}
 
+variable "gds_re-dns_zone_id" {}
+
 variable "alertmanager_version" {
   description = "alertmanager version to install in the machine"
   default     = "0.14.0"
@@ -12,10 +14,6 @@ variable "device_mount_path" {
 
 variable "domain_name" {
   description = "Domain to serve Prometheus from and register for a TLS certificate"
-}
-
-variable "reliability_engineering_zone_id" {
-  description = "This is the default route53 resource created by the prometheus module"
 }
 
 variable "prom_subnet_id" {
@@ -42,3 +40,5 @@ variable "logstash_endpoint" {
 variable "logstash_port" {
   description = "Port of logstash endpoint"
 }
+
+variable "deploy_env" {}

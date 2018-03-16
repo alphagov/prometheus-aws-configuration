@@ -12,6 +12,8 @@
 
 # Module directory
 .terraform/
+./terraform.tf
+
 
 ### Terraform Patch ###
 *.tfvars

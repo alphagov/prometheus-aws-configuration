@@ -1,6 +1,7 @@
-terraform {
-  backend "s3" {
-    bucket = "gds-prometheus-terraform"
-    key    = "terraform/state"
-  }
-}
+#terraform {
+#  backend "s3" {
+#    bucket = "gds-prometheus-terraform-staging"
+#    key    = "terraform/state"
+#  }
+#}
+
