@@ -3,7 +3,7 @@ terraform {
 }
 
 resource "aws_iam_instance_profile" "prometheus_config_reader_profile" {
-  name  = "prometheus_config_reader_profile"
+  name = "prometheus_config_reader_profile"
   role = "${aws_iam_role.prometheus_config_reader.name}"
 }
 
@@ -52,11 +52,13 @@ EOF
 }
 
 resource "aws_instance" "prometheus" {
-  ami                    = "${var.ami_id}"
-  instance_type          = "t2.micro"
-  subnet_id              = "${aws_subnet.main.id}"
-  user_data              = "${data.template_file.user_data_script.rendered}"
-  iam_instance_profile   = "${aws_iam_instance_profile.prometheus_config_reader_profile.id}"
+  ami                  = "${var.ami_id}"
+  instance_type        = "t2.micro"
+  subnet_id            = "${aws_subnet.main.id}"
+  user_data            = "${data.template_file.user_data_script.rendered}"
+  iam_instance_profile = "${aws_iam_instance_profile.prometheus_config_reader_profile.id}"
+  private_ip           = "${var.prom_priv_ip}"
+
   vpc_security_group_ids = [
     "${aws_security_group.ssh_from_gds.id}",
     "${aws_security_group.http_outbound.id}",
@@ -69,11 +71,10 @@ resource "aws_instance" "prometheus" {
   }
 }
 
-
 resource "aws_volume_attachment" "attach-prometheus-disk" {
-  device_name = "${var.device_mount_path}"
-  volume_id   = "${var.volume_to_attach}"
-  instance_id = "${aws_instance.prometheus.id}"
+  device_name  = "${var.device_mount_path}"
+  volume_id    = "${var.volume_to_attach}"
+  instance_id  = "${aws_instance.prometheus.id}"
   skip_destroy = true
 }
 
@@ -92,7 +93,7 @@ data "template_file" "user_data_script" {
 }
 
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/24"
+  cidr_block           = "10.0.0.0/24"
   enable_dns_hostnames = true
 
   tags {
@@ -109,8 +110,8 @@ resource "aws_internet_gateway" "main" {
 }
 
 resource "aws_subnet" "main" {
-  vpc_id     = "${aws_vpc.main.id}"
-  cidr_block = "${aws_vpc.main.cidr_block}"
+  vpc_id                  = "${aws_vpc.main.id}"
+  cidr_block              = "${aws_vpc.main.cidr_block}"
   map_public_ip_on_launch = true
 
   tags {
@@ -135,6 +136,30 @@ resource "aws_security_group" "ssh_from_gds" {
   }
 }
 
+resource "aws_security_group" "http_am_from_gds_vpn_internal" {
+  vpc_id      = "${aws_vpc.main.id}"
+  name        = "Intenral access to alert manager UI"
+  description = "Allow  GDS user access to the prometheus UI, including also internal VPC access"
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 9093
+    to_port     = 9093
+    cidr_blocks = ["${var.cidr_admin_whitelist}"]
+  }
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 9093
+    to_port     = 9093
+    cidr_blocks = ["10.0.0.0/24"]
+  }
+
+  tags {
+    Name = "Intenral access to alert manager UI from GDS"
+  }
+}
+
 resource "aws_security_group" "http_outbound" {
   vpc_id      = "${aws_vpc.main.id}"
   name        = "HTTP outbound"
@@ -152,6 +177,13 @@ resource "aws_security_group" "http_outbound" {
     from_port   = 443
     to_port     = 443
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol    = "tcp"
+    from_port   = 9093
+    to_port     = 9093
+    cidr_blocks = ["10.0.0.0/24"]
   }
 
   tags {
@@ -206,7 +238,7 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table_association" "public" {
-  subnet_id = "${aws_subnet.main.id}"
+  subnet_id      = "${aws_subnet.main.id}"
   route_table_id = "${aws_route_table.public.id}"
 }
 
@@ -220,11 +252,11 @@ resource "aws_eip_association" "eip_assoc" {
 }
 
 resource "aws_route53_zone" "main" {
-  name   = "gds-reliability.engineering"
+  name = "gds-reliability.engineering"
 }
 
 resource "aws_route53_zone" "metrics" {
-  name   = "metrics.gds-reliability.engineering"
+  name = "metrics.gds-reliability.engineering"
 }
 
 resource "aws_route53_record" "metrics" {
@@ -285,4 +317,3 @@ resource "aws_iam_user_policy" "cf_app_discovery_bucket_access" {
 }
 EOF
 }
-

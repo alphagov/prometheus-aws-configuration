@@ -18,6 +18,7 @@ module "prometheus" {
   real_certificate   = "${var.real_certificate}"
   volume_to_attach   = "${aws_ebs_volume.promethues-disk.id}"
   domain_name        = "metrics.gds-reliability.engineering"
+  prom_priv_ip       = "${var.prometheus_private_ip}"
   logstash_endpoint  = "47c3212e-794a-4be1-af7c-2eac93519b0a-ls.logit.io"
   logstash_port      = 18210
 }
@@ -31,6 +32,7 @@ module "alertmanager" {
   prom_subnet_id                  = "${module.prometheus.prom_subnet_id}"
   prom_security_groups            = "${module.prometheus.prom_security_groups}"
   real_certificate                = "${var.real_certificate}"
+  am_priv_ip                      = "${var.alertmanager_private_ip}"
   domain_name                     = "alerts.gds-reliability.engineering"
   logstash_endpoint               = "47c3212e-794a-4be1-af7c-2eac93519b0a-ls.logit.io"
   logstash_port                   = 18210

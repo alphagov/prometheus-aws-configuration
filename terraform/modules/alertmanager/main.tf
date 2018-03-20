@@ -7,6 +7,7 @@ resource "aws_instance" "alertmanager" {
   instance_type          = "t2.micro"
   subnet_id              = "${var.prom_subnet_id}"
   user_data              = "${data.template_file.user_data_script.rendered}"
+  private_ip             = "${var.am_priv_ip}"
   vpc_security_group_ids = ["${var.prom_security_groups}"]
 
   tags {

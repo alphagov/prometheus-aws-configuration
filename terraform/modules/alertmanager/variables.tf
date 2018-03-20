@@ -1,5 +1,7 @@
 variable "ami_id" {}
 
+variable "am_priv_ip" {}
+
 variable "alertmanager_version" {
   description = "alertmanager version to install in the machine"
   default     = "0.14.0"
