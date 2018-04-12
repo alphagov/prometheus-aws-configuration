@@ -53,7 +53,7 @@ EOF
 
 resource "aws_instance" "prometheus" {
   ami                  = "${var.ami_id}"
-  instance_type        = "t2.micro"
+  instance_type        = "t2.medium"
   subnet_id            = "${aws_subnet.main.id}"
   user_data            = "${data.template_file.user_data_script.rendered}"
   iam_instance_profile = "${aws_iam_instance_profile.prometheus_config_reader_profile.id}"
