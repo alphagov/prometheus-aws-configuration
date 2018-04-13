@@ -53,11 +53,12 @@ EOF
 
 resource "aws_instance" "prometheus" {
   ami                  = "${var.ami_id}"
-  instance_type        = "t2.medium"
+  instance_type        = "m4.xlarge"
   subnet_id            = "${aws_subnet.main.id}"
   user_data            = "${data.template_file.user_data_script.rendered}"
   iam_instance_profile = "${aws_iam_instance_profile.prometheus_config_reader_profile.id}"
   private_ip           = "${var.prom_priv_ip}"
+  ebs_optimized        = true
 
   vpc_security_group_ids = [
     "${aws_security_group.ssh_from_gds.id}",
