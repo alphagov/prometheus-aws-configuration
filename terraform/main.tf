@@ -7,7 +7,7 @@ provider "aws" {
 }
 
 terraform {
-  required_version = ">= 0.11.2"
+  required_version = "= 0.11.7"
 }
 
 module "prometheus" {
