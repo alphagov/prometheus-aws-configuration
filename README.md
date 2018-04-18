@@ -19,3 +19,21 @@ To avoid this, we can follow the next steps (in OS X):
 5. Uncheck `Lock after X minutes of inactivity` and `Look when sleeping`
 
 After this change, your credentials should be only asked the first time you use the tool after start/restart the machine.
+
+## Setup ##
+
+```brew install terraform```
+
+```cd terraform```
+
+```aws-vault exec <your-aws-profile-name> -- terraform init```
+
+You will be asked for the region of the S3 bucket. You should answer:
+
+```eu-west-1```
+
+Test you are set up succesfully by running:
+
+```aws-vault exec <your-aws-profile-name> -- terraform plan```
+
+You should get no error message
