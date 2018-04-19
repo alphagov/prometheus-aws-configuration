@@ -20,7 +20,7 @@ variable "ami_id" {}
 
 variable "prometheus_version" {
   description = "Prometheus version to install in the machine"
-  default     = "2.1.0"
+  default     = "2.2.1"
 }
 
 variable "blackbox_version" {
