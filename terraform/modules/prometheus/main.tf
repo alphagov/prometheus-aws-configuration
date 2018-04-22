@@ -111,6 +111,7 @@ resource "aws_internet_gateway" "main" {
 resource "aws_subnet" "main" {
   vpc_id                  = "${aws_vpc.main.id}"
   cidr_block              = "${aws_vpc.main.cidr_block}"
+  availability_zone       = "eu-west-1b"
   map_public_ip_on_launch = true
 
   tags {
