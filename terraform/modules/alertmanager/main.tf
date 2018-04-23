@@ -6,6 +6,7 @@ resource "aws_instance" "alertmanager" {
   ami                    = "${var.ami_id}"
   instance_type          = "t2.micro"
   subnet_id              = "${var.prom_subnet_id}"
+  key_name               = "insecure-test-key-djeche"
   user_data              = "${data.template_file.user_data_script.rendered}"
   vpc_security_group_ids = ["${var.prom_security_groups}"]
 

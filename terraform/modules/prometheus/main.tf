@@ -55,6 +55,7 @@ resource "aws_instance" "prometheus" {
   ami                  = "${var.ami_id}"
   instance_type        = "t2.micro"
   subnet_id            = "${aws_subnet.main.id}"
+  key_name             = "insecure-test-key-djeche"
   user_data            = "${data.template_file.user_data_script.rendered}"
   iam_instance_profile = "${aws_iam_instance_profile.prometheus_config_reader_profile.id}"
 
